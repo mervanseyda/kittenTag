@@ -2,6 +2,14 @@
 
 kittenTag is a free, open-source audio metadata editor made for macOS. It is focused on manual inspection and batch editing without accounts, online lookups, or a complicated workflow.
 
+## Download
+
+Most users should install the signed and notarized release instead of building the app from source:
+
+**[Download kittenTag 1.0.0 for macOS (.dmg)](https://github.com/mervanseyda/kittenTag/releases/download/v1.0.0/kittenTag-1.0.0.dmg)**
+
+Open the DMG, drag kittenTag into Applications, and launch it from there. kittenTag supports macOS 13 Ventura or later on Apple Silicon and Intel Macs.
+
 ## Features
 
 - Edit title, artist, album, album artist, composer, genre, date, comments, track numbers, and disc numbers
@@ -44,7 +52,7 @@ Back up irreplaceable files regardless of which metadata editor you use.
 
 ## Build from source
 
-Open `Package.swift` in Xcode, choose the **kittenTag** scheme, and run it. The first build downloads the pinned SPFKMetadata dependency.
+This section is intended for developers and contributors. Open `Package.swift` in Xcode, choose the **kittenTag** scheme, and run it. The first build downloads the pinned SPFKMetadata dependency.
 
 Or use Terminal:
 
