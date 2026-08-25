@@ -116,7 +116,10 @@ else
 fi
 
 rm -rf "$STAGING"
-shasum -a 256 "$DMG" > "$DMG.sha256"
+(
+    cd "$OUTPUT_DIR"
+    shasum -a 256 "${DMG:t}" > "${DMG:t}.sha256"
+)
 
 print
 print -- "$DMG"
