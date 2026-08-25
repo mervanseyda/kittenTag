@@ -1,6 +1,6 @@
 # kittenTag
 
-kittenTag is a free, open-source audio metadata editor made for macOS. It is focused on manual inspection and batch editing without accounts, online lookups, or a complicated workflow.
+kittenTag is a free and open-source audio metadata editor made for macOS. It is focused on manual inspection and batch editing without accounts, online lookups or a complicated workflow.
 
 ## Download
 
@@ -8,23 +8,21 @@ Most users should install the signed and notarized release instead of building t
 
 **[Download kittenTag 1.0.0 for macOS (.dmg)](https://github.com/mervanseyda/kittenTag/releases/download/v1.0.0/kittenTag-1.0.0.dmg)**
 
-Open the DMG, drag kittenTag into Applications, and launch it from there. kittenTag supports macOS 13 Ventura or later on Apple Silicon and Intel Macs.
+Open the DMG, drag kittenTag into Applications and launch it from there. kittenTag supports macOS 13 Ventura or later on Apple Silicon and Intel Macs.
 
 ## Features
 
-- Edit title, artist, album, album artist, composer, genre, date, comments, track numbers, and disc numbers
+- Edit title, artist, album, album artist, composer, genre, date, comments, track numbers and disc numbers
 - Edit one file or many files at once
-- Add, replace, remove, resize, and convert embedded artwork
+- Add, replace, remove, resize and convert embedded artwork
 - Rename files from tag templates with previews and collision checks
 - Extract tags from filenames with a preview
-- Search, sort, customize columns, and export metadata as CSV
+- Search, sort, customize columns and export metadata as CSV
 - Preserve metadata fields that kittenTag does not expose
-- English and Turkish interfaces, plus light and dark appearance
+- English and Turkish interfaces / light and dark appearance
 - Fully offline; no account or metadata service required
 
-## Supported formats
-
-Automated read/write and audio-integrity tests cover:
+## Supported audio formats
 
 - MP3
 - M4A (AAC in an MPEG-4 container)
@@ -35,13 +33,9 @@ Automated read/write and audio-integrity tests cover:
 - WAV / WAVE
 - AIFF / AIF / AIFC
 
-Embedded artwork round-trip tests cover all formats above.
-
 ## Safe saving
 
 Text-only changes use the metadata engine's format-aware save path, avoiding a full audio-file copy when possible. Artwork changes use a same-volume staging file because they require multiple write steps. kittenTag verifies the staged metadata, artwork, and readable audio properties before replacing the original.
-
-On APFS, the staging file is normally a copy-on-write clone. On other volumes, kittenTag checks available temporary space first. Batch saves are sequential, so only one staged track is needed at a time.
 
 Back up irreplaceable files regardless of which metadata editor you use.
 
@@ -52,7 +46,7 @@ Back up irreplaceable files regardless of which metadata editor you use.
 
 ## Build from source
 
-This section is intended for developers and contributors. Open `Package.swift` in Xcode, choose the **kittenTag** scheme, and run it. The first build downloads the pinned SPFKMetadata dependency.
+This section is intended for developers and contributors. Open `Package.swift` in Xcode, choose the **kittenTag** scheme and run it. The first build downloads the pinned SPFKMetadata dependency.
 
 Or use Terminal:
 
@@ -70,11 +64,11 @@ The release packaging scripts require Xcode and, for public distribution, an App
 
 ## Contributing
 
-Bug reports and focused pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a change. If a file triggers a metadata bug, share the smallest non-private reproduction you can create; do not publish copyrighted music.
+Bug reports and focused pull requests are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a change. If a file triggers a metadata bug you can share the smallest non-private reproduction if you want; do not publish copyrighted music.
 
 ## Privacy
 
-kittenTag edits files locally. It does not require an account, upload music or metadata, or include analytics.
+kittenTag edits files locally. It doesn't require an account.
 
 ## License
 
