@@ -1,0 +1,132 @@
+{
+  "features" : [
+    "refractivity"
+  ],
+  "fill" : {
+    "automatic-gradient" : "display-p3:0.96094,0.94141,0.89795,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    },
+    {
+      "layers" : [
+        {
+          "hidden" : false,
+          "image-name" : "13_specular_highlights.png",
+          "name" : "13_specular_highlights"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "12_tag_inner-V1.png",
+          "name" : "12_tag_inner-V1",
+          "position" : {
+            "scale" : 0.6,
+            "translation-in-points" : [
+              -67.5,
+              -66.09999999999991
+            ]
+          }
+        },
+        {
+          "hidden" : true,
+          "image-name" : "12_tag_inner.png",
+          "name" : "12_tag_inner",
+          "position" : {
+            "scale" : 0.8,
+            "translation-in-points" : [
+              -32,
+              -32.799999999999955
+            ]
+          }
+        },
+        {
+          "hidden" : true,
+          "image-name" : "11_tag_rims.png",
+          "name" : "11_tag_rims"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "10_tag_ring.png",
+          "name" : "10_tag_ring"
+        },
+        {
+          "hidden" : true,
+          "image-name" : "09_tag_shadow.png",
+          "name" : "09_tag_shadow"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "08_overlap_contact_shadow.png",
+          "name" : "08_overlap_contact_shadow"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "07_record_spindle.png",
+          "name" : "07_record_spindle"
+        },
+        {
+          "hidden" : false,
+          "image-name" : "06_record_label-v1.png",
+          "name" : "06_record_label-v1"
+        },
+        {
+          "hidden" : true,
+          "image-name" : "06_record_label.png",
+          "name" : "06_record_label"
+        },
+        {
+          "image-name" : "05_record_grooves.png",
+          "name" : "05_record_grooves"
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    },
+    {
+      "blur-material" : 0.5,
+      "layers" : [
+        {
+          "hidden" : false,
+          "image-name" : "04_record_disc.png",
+          "name" : "04_record_disc"
+        }
+      ],
+      "refractivity" : {
+        "depth" : 0,
+        "enabled" : true,
+        "strength" : 0.5
+      },
+      "shadow" : {
+        "kind" : "layer-color",
+        "opacity" : 0.6
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.3
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

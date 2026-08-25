@@ -1,0 +1,11 @@
+/*
+ kittenTag — Türkçe
+
+ Uygulamanın kaynak anahtarları Türkçedir. Bu tablo Türkçe yerelleştirme
+ paketini açıkça tanımlar; eksik anahtarlar doğal olarak anahtarın kendisini
+ gösterir.
+*/
+"Sistem Varsayılanı" = "Sistem Varsayılanı";
+"Sistem" = "Sistem";
+"Açık" = "Açık";
+"Koyu" = "Koyu";

@@ -1,0 +1,19 @@
+.DS_Store
+!Packaging/DMG/.DS_Store
+.build/
+.swiftpm/
+DerivedData/
+dist/
+.pnpm-store/
+*.xcuserstate
+Screenshot Demo Library/
+website/
+Tools/
+*.dmg
+*.zip
+*.p12
+*.cer
+*.mobileprovision
+.env
+.env.*
+!.env.example
