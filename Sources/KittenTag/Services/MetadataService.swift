@@ -142,7 +142,7 @@ enum MetadataService {
         case (nil, nil):
             break
         case let (expectedData?, actualData?):
-            guard artworkFingerprint(expectedData) == artworkFingerprint(actualData) else {
+            guard artworkMatches(expectedData, actualData) else {
                 throw MetadataError.verificationFailed("artwork mismatch")
             }
         default:
@@ -219,19 +219,76 @@ enum MetadataService {
         return (image, type)
     }
 
-    /// A small canonical thumbnail is enough to verify that the artwork read
-    /// back from the file is the image the user selected, without allocating a
-    /// full-size bitmap for large covers.
-    private static func artworkFingerprint(_ data: Data) -> Data? {
+    /// Render both inputs through the same explicit sRGB bitmap context before
+    /// comparing them. Asking ImageIO to create a thumbnail directly from the
+    /// original JPEG and from the PNG produced by `read(_:)` can yield different
+    /// bytes for the same pixels (notably with progressive, color-profiled
+    /// JPEGs), which made valid artwork writes fail verification.
+    private struct ArtworkSignature {
+        let width: Int
+        let height: Int
+        let pixels: Data
+    }
+
+    private static func artworkSignature(_ data: Data) -> ArtworkSignature? {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let thumbnail = CGImageSourceCreateThumbnailAtIndex(source, 0, [
-                  kCGImageSourceCreateThumbnailFromImageAlways: true,
-                  kCGImageSourceCreateThumbnailWithTransform: true,
-                  kCGImageSourceThumbnailMaxPixelSize: 64
-              ] as CFDictionary)
+              let image = CGImageSourceCreateImageAtIndex(source, 0, nil),
+              let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
         else { return nil }
 
-        return NSBitmapImageRep(cgImage: thumbnail).representation(using: .png, properties: [:])
+        let size = 64
+        var pixels = [UInt8](repeating: 0, count: size * size * 4)
+        return pixels.withUnsafeMutableBytes { buffer in
+            guard let context = CGContext(
+                data: buffer.baseAddress,
+                width: size,
+                height: size,
+                bitsPerComponent: 8,
+                bytesPerRow: size * 4,
+                space: colorSpace,
+                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+                    | CGBitmapInfo.byteOrder32Big.rawValue
+            ) else { return nil }
+
+            context.interpolationQuality = .high
+            context.draw(image, in: CGRect(x: 0, y: 0, width: size, height: size))
+            return ArtworkSignature(width: image.width, height: image.height, pixels: Data(buffer))
+        }
+    }
+
+    private static func artworkMatches(_ lhsData: Data, _ rhsData: Data) -> Bool {
+        guard let lhsSignature = artworkSignature(lhsData),
+              let rhsSignature = artworkSignature(rhsData),
+              lhsSignature.width == rhsSignature.width,
+              lhsSignature.height == rhsSignature.height
+        else { return false }
+
+        let lhs = lhsSignature.pixels
+        let rhs = rhsSignature.pixels
+        guard
+              lhs.count == rhs.count,
+              !lhs.isEmpty
+        else { return false }
+
+        if lhs == rhs { return true }
+
+        // TagPicture currently decodes and re-encodes JPEG artwork before
+        // storing it. That necessarily changes a few pixel values even though
+        // the visual content is the same. Keep the threshold tight enough to
+        // reject a different cover while accepting ordinary JPEG generation
+        // loss (the real-world regression fixture measures ~2.8/255 MAE).
+        var totalDifference = 0
+        var significantlyDifferentChannels = 0
+        var channelCount = 0
+        for index in lhs.indices where index % 4 != 3 {
+            let difference = abs(Int(lhs[index]) - Int(rhs[index]))
+            totalDifference += difference
+            if difference > 16 { significantlyDifferentChannels += 1 }
+            channelCount += 1
+        }
+        let meanAbsoluteError = Double(totalDifference) / Double(channelCount)
+        let significantDifferenceRatio = Double(significantlyDifferentChannels) / Double(channelCount)
+        return meanAbsoluteError <= 5 && significantDifferenceRatio <= 0.05
     }
 
     /// SPFKMetadata 1.4.5 writes a valid FLAC PICTURE payload but leaves the

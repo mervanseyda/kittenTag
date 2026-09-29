@@ -130,6 +130,37 @@ final class CoreFormatTests: XCTestCase {
         try run(ffmpeg, ["-v", "error", "-i", url.path, "-f", "null", "-"])
     }
 
+    func testPhotographicJPEGArtworkOnALACM4A() throws {
+        let ffmpeg = try requireFFmpeg()
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("kittentag-jpeg-alac-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: directory) }
+
+        let source = directory.appendingPathComponent("source.wav")
+        let url = directory.appendingPathComponent("sample.m4a")
+        let artworkURL = directory.appendingPathComponent("cover.jpg")
+        try makeWave(at: source)
+        try run(ffmpeg, ["-y", "-loglevel", "error", "-i", source.path, "-c:a", "alac", url.path])
+        try run(ffmpeg, [
+            "-y", "-loglevel", "error", "-f", "lavfi",
+            "-i", "testsrc2=size=2508x2508:rate=1", "-frames:v", "1",
+            "-q:v", "2", artworkURL.path
+        ])
+
+        var track = try MetadataService.read(url)
+        track.coverData = try Data(contentsOf: artworkURL)
+        track.coverWasModified = true
+        do {
+            try MetadataService.write(track)
+        } catch {
+            XCTFail("Real-world artwork write failed: \(String(reflecting: error))")
+            throw error
+        }
+
+        XCTAssertNotNil(try MetadataService.read(url).coverData)
+    }
+
     private func makeWave(at url: URL) throws {
         let format = try XCTUnwrap(AVAudioFormat(standardFormatWithSampleRate: 44_100, channels: 2))
         let file = try AVAudioFile(forWriting: url, settings: format.settings)

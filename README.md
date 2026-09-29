@@ -6,7 +6,7 @@ kittenTag is a free and open-source audio metadata editor made for macOS. It is 
 
 Most users should install the signed and notarized release instead of building the app from source:
 
-**[Download kittenTag 1.0.0 for macOS (.dmg)](https://github.com/mervanseyda/kittenTag/releases/download/v1.0.0/kittenTag-1.0.0.dmg)**
+**[Download kittenTag 1.0.1 for macOS (.dmg)](https://github.com/mervanseyda/kittenTag/releases/download/v1.0.1/kittenTag-1.0.1.dmg)**
 
 Open the DMG, drag kittenTag into Applications and launch it from there. kittenTag supports macOS 13 Ventura or later on Apple Silicon and Intel Macs.
 
