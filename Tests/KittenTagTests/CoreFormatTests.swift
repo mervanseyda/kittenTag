@@ -103,6 +103,52 @@ final class CoreFormatTests: XCTestCase {
         }
     }
 
+    func testRemoteStagingUsesStandardCapacityWhenImportantCapacityIsZero() throws {
+        try MetadataService.ensureStagingCapacity(
+            fileSize: 50 * 1_024 * 1_024, isLocal: false, availableCapacity: 6_893_787_414_528,
+            importantCapacity: 0, supportsFileCloning: false
+        )
+    }
+
+    func testRemoteStagingRequiresSpaceForTheFileAndSafetyMargin() throws {
+        let fileSize = 50 * 1_024 * 1_024
+        let required = fileSize + 32 * 1_024 * 1_024
+        XCTAssertThrowsError(try MetadataService.ensureStagingCapacity(
+            fileSize: fileSize, isLocal: false, availableCapacity: required - 1,
+            importantCapacity: Int64(required), supportsFileCloning: false
+        ))
+        try MetadataService.ensureStagingCapacity(
+            fileSize: fileSize, isLocal: false, availableCapacity: required,
+            importantCapacity: 0, supportsFileCloning: false
+        )
+    }
+
+    func testStagingPreservesImportantCapacityForLocalOrUnknownVolumes() throws {
+        let fileSize = 50 * 1_024 * 1_024
+        let required = fileSize + 32 * 1_024 * 1_024
+        for isLocal in [true, nil] as [Bool?] {
+            try MetadataService.ensureStagingCapacity(
+                fileSize: fileSize, isLocal: isLocal, availableCapacity: 0,
+                importantCapacity: Int64(required), supportsFileCloning: false
+            )
+            XCTAssertThrowsError(try MetadataService.ensureStagingCapacity(
+                fileSize: fileSize, isLocal: isLocal, availableCapacity: required,
+                importantCapacity: 0, supportsFileCloning: false
+            ))
+        }
+    }
+
+    func testStagingSkipsCapacityCheckForCloningOrUnavailableCapacity() throws {
+        try MetadataService.ensureStagingCapacity(
+            fileSize: 50 * 1_024 * 1_024, isLocal: true, availableCapacity: 0,
+            importantCapacity: 0, supportsFileCloning: true
+        )
+        try MetadataService.ensureStagingCapacity(
+            fileSize: 50 * 1_024 * 1_024, isLocal: false, availableCapacity: nil,
+            importantCapacity: 0, supportsFileCloning: false
+        )
+    }
+
     func testFailedArtworkWriteLeavesOriginalFileUntouched() throws {
         let ffmpeg = try requireFFmpeg()
         let directory = FileManager.default.temporaryDirectory

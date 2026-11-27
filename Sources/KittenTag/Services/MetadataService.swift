@@ -90,12 +90,32 @@ enum MetadataService {
     private static func ensureStagingCapacity(for url: URL) throws {
         let values = try url.resourceValues(forKeys: [
             .fileSizeKey,
+            .volumeIsLocalKey,
+            .volumeAvailableCapacityKey,
             .volumeAvailableCapacityForImportantUsageKey,
             .volumeSupportsFileCloningKey
         ])
-        guard values.volumeSupportsFileCloning != true,
-              let fileSize = values.fileSize,
-              let available = values.volumeAvailableCapacityForImportantUsage
+        try ensureStagingCapacity(
+            fileSize: values.fileSize,
+            isLocal: values.volumeIsLocal,
+            availableCapacity: values.volumeAvailableCapacity,
+            importantCapacity: values.volumeAvailableCapacityForImportantUsage,
+            supportsFileCloning: values.volumeSupportsFileCloning
+        )
+    }
+
+    static func ensureStagingCapacity(
+        fileSize: Int?,
+        isLocal: Bool?,
+        availableCapacity: Int?,
+        importantCapacity: Int64?,
+        supportsFileCloning: Bool?
+    ) throws {
+        // SMB can report zero for important usage even when it has free space.
+        let available = isLocal == false ? availableCapacity.map(Int64.init) : importantCapacity
+        guard supportsFileCloning != true,
+              let fileSize,
+              let available
         else { return }
 
         let safetyMargin: Int64 = 32 * 1_024 * 1_024
